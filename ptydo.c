@@ -24,7 +24,7 @@ static void usage()
         "  host PTY. Otherwise, the dimensions will default to 80 by 25.\n"
         "\n"
         "Misc Options:\n"
-        "  -c            Forward ^C to PTY. By default ^C kills ptydo.\n"
+        "  -c            Forward SIGINT to PTY.\n"
     );
     exit(EXIT_SUCCESS);
 }
