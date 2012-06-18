@@ -3,7 +3,13 @@
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
-#include <util.h>
+#ifdef __linux__
+    #include <pty.h>
+#elif __APPLE__
+    #include <util.h>
+#else
+    #error Not sure which header forkpty() is in on your system. Please report a bug at https://github.com/charliesome/ptydo/issues
+#endif
 #include <errno.h>
 #include <signal.h>
 #include <sys/select.h>
