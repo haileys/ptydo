@@ -171,7 +171,7 @@ int main(int argc, char** argv)
             perror("read");
             exit_and_kill_child(EXIT_FAILURE);
         }
-        write(writefd, buff, bytes);
+        (void)write(writefd, buff, bytes);
     }
     
     return 0;
