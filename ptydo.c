@@ -154,7 +154,7 @@ int main(int argc, char** argv)
             readfd = 0;
             writefd = ptyfd;
         } else if(FD_ISSET(ptyfd, &readfds)) {
-            writefd = 0;
+            writefd = 1;
             readfd = ptyfd;
         } else if(FD_ISSET(0, &errfds) || FD_ISSET(ptyfd, &readfds)) {
             exit_and_kill_child(EXIT_SUCCESS);
