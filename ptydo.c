@@ -33,6 +33,7 @@ static void usage()
         "\n"
         "Misc Options:\n"
         "  -c            Forward SIGINT to PTY.\n"
+        "  -e            Join stderr with stdout (through PTY).\n"
     );
     exit(EXIT_SUCCESS);
 }
@@ -59,6 +60,8 @@ int main(int argc, char** argv)
     struct winsize window;
     window.ws_row = 25;
     window.ws_col = 80;
+
+    int keepstderr = 1;
     
     if(isatty(0)) {
         ioctl(0, TIOCGWINSZ, &window);
@@ -99,6 +102,9 @@ int main(int argc, char** argv)
             case 'c':
                 signal(SIGINT, forward_signal_to_pty);
                 break;
+            case 'e':
+                keepstderr = 0;
+                break;
             default:
                 printf("Unknown option '-%c'\n", argv[argi][1]);
                 exit(EXIT_FAILURE);
@@ -109,6 +115,10 @@ int main(int argc, char** argv)
         printf("No command specified\n");
         exit(EXIT_FAILURE);
     }
+
+    int errfd;
+    if (keepstderr)
+        errfd = dup(STDERR_FILENO);
     
     child = forkpty(&ptyfd, NULL, NULL, &window);
     
@@ -122,6 +132,9 @@ int main(int argc, char** argv)
         // we are the child process
 //        execvp(argv[1], argv + 1);
         // execvp failed:
+        if (keepstderr)
+            dup2(errfd, STDERR_FILENO);
+
         char* ptyargv[argc - argi + 1];
         memcpy(ptyargv, argv + argi, (argc - argi) * sizeof(char*));
         ptyargv[argc - argi] = NULL;
